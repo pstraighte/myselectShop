@@ -16,6 +16,8 @@ import java.util.List;
 // 2) NaverApiService : java - naver - service class
  // => 다 세팅하면 "탐색하기"dptj 검색하고 결과 받는 것 까지 가능
 
+// ** 괌심상품 APi 구현  -> Entity - Product
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
