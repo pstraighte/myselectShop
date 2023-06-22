@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 // 13.  roductrepository 주입 받아올 필드 만들고 createProduct 메세드 만들기 + 에너테이션 추가
 // 저장하는 기능완!
 
@@ -43,5 +46,16 @@ public class ProductService {
         product.update(requestDto);
 
         return new ProductResponseDto(product);
+    }
+    // 관심 상품 조회 & 출력2
+    public List<ProductResponseDto> getProducts() {
+        // productRepository.findAll().var => 맞춰서 아래와 같이 자동으로 나옴
+        List<Product> productList = productRepository.findAll();
+        List<ProductResponseDto> responseDtoList = new ArrayList<>();
+//        iter =>  향상된 for문 자동 완성
+        for (Product product : productList) {
+            responseDtoList.add(new ProductResponseDto(product));
+        }
+        return responseDtoList;
     }
 }

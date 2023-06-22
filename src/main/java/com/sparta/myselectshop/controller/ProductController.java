@@ -7,6 +7,8 @@ import com.sparta.myselectshop.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 // 10. RestController 추가 + 필요한 에너테이션 추가하고 API 만들기 -> java - dto class ProductResponseDto
 
 // 12. java - service class ProductService 만글고 ProductService용 필드 하나 선언
@@ -33,4 +35,11 @@ public class ProductController {
     public ProductResponseDto updateProduct(@PathVariable Long id, @RequestBody ProductMypriceRequestDto requestDto){
         return productService.updateProduct(id, requestDto);
     }
+
+    // 관심 상품 조회 & 출력1 -> ProductService
+    @GetMapping("/products")
+    public List<ProductResponseDto> getProducts() {
+        return productService.getProducts();
+    }
+
 }
