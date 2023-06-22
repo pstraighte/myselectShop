@@ -4,6 +4,7 @@ import com.sparta.myselectshop.dto.ProductMypriceRequestDto;
 import com.sparta.myselectshop.dto.ProductRequestDto;
 import com.sparta.myselectshop.dto.ProductResponseDto;
 import com.sparta.myselectshop.entity.Product;
+import com.sparta.myselectshop.naver.dto.ItemDto;
 import com.sparta.myselectshop.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -47,7 +48,8 @@ public class ProductService {
 
         return new ProductResponseDto(product);
     }
-    // 관심 상품 조회 & 출력2
+
+    // 관심 상품 조회 & 출력2 -> Scheduler
     public List<ProductResponseDto> getProducts() {
         // productRepository.findAll().var => 맞춰서 아래와 같이 자동으로 나옴
         List<Product> productList = productRepository.findAll();
@@ -57,5 +59,16 @@ public class ProductService {
             responseDtoList.add(new ProductResponseDto(product));
         }
         return responseDtoList;
+    }
+
+    // 관심 상품 조회 & 출력4
+    @Transactional
+    public void updateBySearch(Long id, ItemDto itemDto) {
+        Product product = productRepository.findById(id).orElseThrow(() ->
+                new NullPointerException("해당 상품은 존재하지 않습니다.")
+        );
+        // product 업데이트
+        // updateByItemDto 통해  Product 이동하여 메서드 만들기
+        product.updateByItemDto(itemDto);
     }
 }
