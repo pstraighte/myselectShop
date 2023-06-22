@@ -1,13 +1,11 @@
 package com.sparta.myselectshop.controller;
 
+import com.sparta.myselectshop.dto.ProductMypriceRequestDto;
 import com.sparta.myselectshop.dto.ProductRequestDto;
 import com.sparta.myselectshop.dto.ProductResponseDto;
 import com.sparta.myselectshop.service.ProductService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 // 10. RestController 추가 + 필요한 에너테이션 추가하고 API 만들기 -> java - dto class ProductResponseDto
 
@@ -24,8 +22,15 @@ public class ProductController {
 
     // 관심 상품 등록 APi
     // 넘어오는 클라이언트의(HTTP body)의 데이터를 requestDto 로 받아옴
-    @GetMapping("/products")
+    @PostMapping("/products")
     public ProductResponseDto createProduct(@RequestBody ProductRequestDto requestDto){
         return productService.createProduct(requestDto);
+    }
+
+    // 관심 상품 업로드1 => ProductMypriceRequestDto class 만들기
+    // ProductRepository class의 updateProduct 메서드 만들기 -> updateProduct 이동
+    @PutMapping("/products/{id}") // {id} => PathVariable
+    public ProductResponseDto updateProduct(@PathVariable Long id, @RequestBody ProductMypriceRequestDto requestDto){
+        return productService.updateProduct(id, requestDto);
     }
 }
