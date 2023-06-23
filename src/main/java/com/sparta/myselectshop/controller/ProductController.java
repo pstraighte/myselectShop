@@ -29,29 +29,39 @@ public class ProductController {
     // 넘어오는 클라이언트의(HTTP body)의 데이터를 requestDto 로 받아옴
     //  ++ 유저별 관심 상품 조회 =>  @AuthenticationPrincipal) 추가
     @PostMapping("/products") // 각 메서드 매개변수의 User 추가
-    public ProductResponseDto createProduct(@RequestBody ProductRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    public ProductResponseDto createProduct(@RequestBody ProductRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return productService.createProduct(requestDto, userDetails.getUser());
     }
 
     // 관심 상품 업로드1 => ProductMypriceRequestDto class 만들기
     // ProductRepository class의 updateProduct 메서드 만들기 -> updateProduct 이동
     @PutMapping("/products/{id}") // {id} => PathVariable
-    public ProductResponseDto updateProduct(@PathVariable Long id, @RequestBody ProductMypriceRequestDto requestDto){
+    public ProductResponseDto updateProduct(@PathVariable Long id, @RequestBody ProductMypriceRequestDto requestDto) {
         return productService.updateProduct(id, requestDto);
     }
 
     // 관심 상품 조회 & 출력1 -> ProductService
     //  ++ 유저별 관심 상품 조회 =>  @AuthenticationPrincipal) 추가
     // +++ 페이징 기능 추가
-    @GetMapping("/products") 
+    @GetMapping("/products")
     public Page<ProductResponseDto> getProducts(
-        @RequestParam("page") int page,
-        @RequestParam("size") int size,
-        @RequestParam("sortBy") String sortBy,
-        @RequestParam("isAsc") boolean isAsc,
+            @RequestParam("page") int page,
+            @RequestParam("size") int size,
+            @RequestParam("sortBy") String sortBy,
+            @RequestParam("isAsc") boolean isAsc,
 
-        @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return productService.getProducts(userDetails.getUser(), page-1, size, sortBy, isAsc);
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return productService.getProducts(userDetails.getUser(), page - 1, size, sortBy, isAsc);
+    }
+
+    @PostMapping("/products/{productId}/folder")
+    // @RequestParam : form 형식으로 폴더의 Id가 넘어옴
+    public void addFolder(
+            @PathVariable Long productId,
+            @RequestParam Long folderId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        productService.addFolder(productId,folderId, userDetails.getUser());
     }
 
 }
