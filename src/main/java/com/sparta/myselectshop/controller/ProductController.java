@@ -3,8 +3,10 @@ package com.sparta.myselectshop.controller;
 import com.sparta.myselectshop.dto.ProductMypriceRequestDto;
 import com.sparta.myselectshop.dto.ProductRequestDto;
 import com.sparta.myselectshop.dto.ProductResponseDto;
+import com.sparta.myselectshop.security.UserDetailsImpl;
 import com.sparta.myselectshop.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,9 +26,10 @@ public class ProductController {
 
     // 관심 상품 등록 APi
     // 넘어오는 클라이언트의(HTTP body)의 데이터를 requestDto 로 받아옴
-    @PostMapping("/products")
-    public ProductResponseDto createProduct(@RequestBody ProductRequestDto requestDto){
-        return productService.createProduct(requestDto);
+    //  ++ 유저별 관심 상품 조회 =>  @AuthenticationPrincipal) 추가
+    @PostMapping("/products") // 각 메서드 매개변수의 User 추가
+    public ProductResponseDto createProduct(@RequestBody ProductRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return productService.createProduct(requestDto, userDetails.getUser());
     }
 
     // 관심 상품 업로드1 => ProductMypriceRequestDto class 만들기
@@ -37,9 +40,16 @@ public class ProductController {
     }
 
     // 관심 상품 조회 & 출력1 -> ProductService
-    @GetMapping("/products")
-    public List<ProductResponseDto> getProducts() {
-        return productService.getProducts();
+    //  ++ 유저별 관심 상품 조회 =>  @AuthenticationPrincipal) 추가
+    @GetMapping("/products") 
+    public List<ProductResponseDto> getProducts(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return productService.getProducts(userDetails.getUser());
+    }
+
+    //  ++ 유저별 관심 상품 조회 -> getAllProducts 메서드 만들기
+    @GetMapping("/admin/products")
+    public List<ProductResponseDto> getAllProducts(){
+        return productService.getAllProducts();
     }
 
 }

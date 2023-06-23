@@ -40,11 +40,19 @@ public class Product extends Timestamped {
     @Column(nullable = false)
     private int myprice;
 
-    public Product(ProductRequestDto requestDto) {
+    // ++ 유저별 관심 상품 조회
+    // 관심 상품과 유저정보 연결(prrduct와 UserEntity 의 관계설정)
+    @ManyToOne(fetch = FetchType.LAZY) // 원래 기본값 : EAGER => 즉시 조회
+    // 지금 회원 정보가 필요할 때만 조회 할 수 있도록 함
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    public Product(ProductRequestDto requestDto, User user) {
         this.title = requestDto.getTitle();
         this.image = requestDto.getImage();
         this.link = requestDto.getLink();
         this.lprice = requestDto.getLprice();
+        this.user = user;
     }
     // 관심 상품 업로드3
     public void update(ProductMypriceRequestDto requestDto) {

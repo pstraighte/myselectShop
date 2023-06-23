@@ -4,6 +4,7 @@ import com.sparta.myselectshop.dto.ProductMypriceRequestDto;
 import com.sparta.myselectshop.dto.ProductRequestDto;
 import com.sparta.myselectshop.dto.ProductResponseDto;
 import com.sparta.myselectshop.entity.Product;
+import com.sparta.myselectshop.entity.User;
 import com.sparta.myselectshop.naver.dto.ItemDto;
 import com.sparta.myselectshop.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +25,8 @@ public class ProductService {
     private final ProductRepository productRepository;
     public static final int MIN_MY_PRICE = 100;
 
-    public ProductResponseDto createProduct(ProductRequestDto requestDto) {
-        Product product = productRepository.save(new Product(requestDto));
+    public ProductResponseDto createProduct(ProductRequestDto requestDto, User user) {
+        Product product = productRepository.save(new Product(requestDto, user));
         return new ProductResponseDto(product);
     }
 
@@ -50,9 +51,10 @@ public class ProductService {
     }
 
     // 관심 상품 조회 & 출력2 -> Scheduler
-    public List<ProductResponseDto> getProducts() {
+    //  ++ 유저별 관심 상품 조회  findAll => findAllByUser(user) -> 메서드 만들기
+    public List<ProductResponseDto> getProducts(User user) {
         // productRepository.findAll().var => 맞춰서 아래와 같이 자동으로 나옴
-        List<Product> productList = productRepository.findAll();
+        List<Product> productList = productRepository.findAllByUser(user);
         List<ProductResponseDto> responseDtoList = new ArrayList<>();
 //        iter =>  향상된 for문 자동 완성
         for (Product product : productList) {
@@ -70,5 +72,17 @@ public class ProductService {
         // product 업데이트
         // updateByItemDto 통해  Product 이동하여 메서드 만들기
         product.updateByItemDto(itemDto);
+    }
+
+    //  ++ 유저별 관심 상품 조회
+    public List<ProductResponseDto> getAllProducts() {
+        List<Product> productList = productRepository.findAll();
+        List<ProductResponseDto> responseDtoList = new ArrayList<>();
+
+        for (Product product : productList) {
+            responseDtoList.add(new ProductResponseDto(product));
+        }
+
+        return responseDtoList;
     }
 }
