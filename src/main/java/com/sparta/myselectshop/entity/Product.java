@@ -54,7 +54,7 @@ public class Product extends Timestamped {
     // productFolder : Product = N : 1
     // 외래키의 주인 => productFolder
     @OneToMany(mappedBy = "product")
-    private List<ProductFolder> productFolder = new ArrayList<>();
+    private List<ProductFolder> productFolderList = new ArrayList<>();
 
 
 

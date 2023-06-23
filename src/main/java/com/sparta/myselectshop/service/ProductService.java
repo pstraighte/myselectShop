@@ -58,6 +58,7 @@ public class ProductService {
     // 관심 상품 조회 & 출력2 -> Scheduler
     // ++ 유저별 관심 상품 조회  findAll => findAllByUser(user) -> 메서드 만들기
     // +++ 페이징 기능 추가 매개변수 수정 + 기능 추가
+    @Transactional(readOnly = true) // 성능을 놆이기 위함
     public Page<ProductResponseDto> getProducts(User user, int page, int size, String sortBy, boolean isAsc) {
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC; // 삼항연산자, true => ASc , false => DESC
         Sort sort = Sort.by(direction, sortBy); // sortBy : 정렬항목
