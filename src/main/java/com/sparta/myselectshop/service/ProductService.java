@@ -5,9 +5,14 @@ import com.sparta.myselectshop.dto.ProductRequestDto;
 import com.sparta.myselectshop.dto.ProductResponseDto;
 import com.sparta.myselectshop.entity.Product;
 import com.sparta.myselectshop.entity.User;
+import com.sparta.myselectshop.entity.UserRoleEnum;
 import com.sparta.myselectshop.naver.dto.ItemDto;
 import com.sparta.myselectshop.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,16 +56,25 @@ public class ProductService {
     }
 
     // 관심 상품 조회 & 출력2 -> Scheduler
-    //  ++ 유저별 관심 상품 조회  findAll => findAllByUser(user) -> 메서드 만들기
-    public List<ProductResponseDto> getProducts(User user) {
-        // productRepository.findAll().var => 맞춰서 아래와 같이 자동으로 나옴
-        List<Product> productList = productRepository.findAllByUser(user);
-        List<ProductResponseDto> responseDtoList = new ArrayList<>();
-//        iter =>  향상된 for문 자동 완성
-        for (Product product : productList) {
-            responseDtoList.add(new ProductResponseDto(product));
+    // ++ 유저별 관심 상품 조회  findAll => findAllByUser(user) -> 메서드 만들기
+    // +++ 페이징 기능 추가 매개변수 수정 + 기능 추가
+    public Page<ProductResponseDto> getProducts(User user, int page, int size, String sortBy, boolean isAsc) {
+        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC; // 삼항연산자, true => ASc , false => DESC
+        Sort sort = Sort.by(direction, sortBy); // sortBy : 정렬항목
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        // +++ 페이징 기능 추가 매개변수 수정
+        UserRoleEnum userRoleEnum = user.getRole();
+
+        Page<Product> productList;
+
+        if(userRoleEnum == UserRoleEnum.USER){
+            productList = productRepository.findAllByUser(user, pageable);
+        } else {
+            productList = productRepository.findAll(pageable);
         }
-        return responseDtoList;
+        // map :  page 타입에서 제공하는 메서드
+        return productList.map(ProductResponseDto::new);
     }
 
     // 관심 상품 조회 & 출력4
@@ -74,15 +88,4 @@ public class ProductService {
         product.updateByItemDto(itemDto);
     }
 
-    //  ++ 유저별 관심 상품 조회
-    public List<ProductResponseDto> getAllProducts() {
-        List<Product> productList = productRepository.findAll();
-        List<ProductResponseDto> responseDtoList = new ArrayList<>();
-
-        for (Product product : productList) {
-            responseDtoList.add(new ProductResponseDto(product));
-        }
-
-        return responseDtoList;
-    }
 }

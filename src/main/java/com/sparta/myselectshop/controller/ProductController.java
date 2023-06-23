@@ -6,6 +6,7 @@ import com.sparta.myselectshop.dto.ProductResponseDto;
 import com.sparta.myselectshop.security.UserDetailsImpl;
 import com.sparta.myselectshop.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,15 +42,16 @@ public class ProductController {
 
     // 관심 상품 조회 & 출력1 -> ProductService
     //  ++ 유저별 관심 상품 조회 =>  @AuthenticationPrincipal) 추가
+    // +++ 페이징 기능 추가
     @GetMapping("/products") 
-    public List<ProductResponseDto> getProducts(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return productService.getProducts(userDetails.getUser());
-    }
+    public Page<ProductResponseDto> getProducts(
+        @RequestParam("page") int page,
+        @RequestParam("size") int size,
+        @RequestParam("sortBy") String sortBy,
+        @RequestParam("isAsc") boolean isAsc,
 
-    //  ++ 유저별 관심 상품 조회 -> getAllProducts 메서드 만들기
-    @GetMapping("/admin/products")
-    public List<ProductResponseDto> getAllProducts(){
-        return productService.getAllProducts();
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return productService.getProducts(userDetails.getUser(), page-1, size, sortBy, isAsc);
     }
 
 }
