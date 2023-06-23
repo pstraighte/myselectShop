@@ -114,4 +114,19 @@ public class ProductService {
 
         productFolderRepository.save(new ProductFolder(product,folder));
     }
+
+    public Page<ProductResponseDto> getProductsInFolder(Long folderId, int page, int size, String sortBy, boolean isAsc, User user) {
+
+        // 페이징 정렬
+        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC; // 삼항연산자, true => ASc , false => DESC
+        Sort sort = Sort.by(direction, sortBy); // sortBy : 정렬항목
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<Product> productList = productRepository.findAllByUserAndProductFolderList_FolderId(user,folderId,pageable);
+        // 데이터를  Page<Product> 으로만 받아올 수 있음
+        //  retrun 값인 Page<ProductResponseDto> 으로 Page<Product>을 변환
+        Page<ProductResponseDto> responseDtoList = productList.map(ProductResponseDto::new);
+
+        return responseDtoList;
+    }
 }
